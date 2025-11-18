@@ -1,0 +1,6 @@
+@Quixo.Api_HostAddress = http://localhost:5207
+
+GET {{Quixo.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

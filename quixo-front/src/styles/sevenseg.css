@@ -1,0 +1,11 @@
+.sevenseg {
+  font-family: "Segment7Standard", monospace;
+  letter-spacing: 2px;
+  background: #111;
+  color: #22ff22;
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  min-width: 120px;
+  text-align: center;
+}
