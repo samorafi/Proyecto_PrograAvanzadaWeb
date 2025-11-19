@@ -6,6 +6,8 @@ using Quixo.Api.Dtos;
 using Quixo.Api.Services;
 
 namespace Quixo.Api.Controllers;
+//GET /api/jugadores, POST, PUT, DELETE, GET /exists, GET /by-name, GET /{id}/stats-2p. 
+//Valida entradas y devuelve códigos
 
 [ApiController]
 [Route("api/[controller]")]
@@ -20,21 +22,21 @@ public class JugadoresController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] JugadorListQuery q)
+    public async Task<IActionResult> List([FromQuery] string? q, [FromQuery] int page = 1, [FromQuery] int pageSize = 500)
     {
-        var qry = _db.Jugadores.AsQueryable();
-        if (!string.IsNullOrWhiteSpace(q.Q))
-            qry = qry.Where(j => j.Nombre.Contains(q.Q));
+        var qry = _db.Jugadores.AsNoTracking();
+        if (!string.IsNullOrWhiteSpace(q))
+            qry = qry.Where(j => j.Nombre.Contains(q));
 
-        var total = await qry.CountAsync();
-        var data = await qry
-            .OrderByDescending(j => j.JugadorId)
-            .Skip((q.Page - 1) * q.PageSize)
-            .Take(q.PageSize)
+        var items = await qry
+            .OrderBy(j => j.Nombre)
+            .Take(pageSize)
+            .Select(j => new { jugadorId = j.JugadorId, nombre = j.Nombre })
             .ToListAsync();
 
-        return Ok(new { total, page = q.Page, pageSize = q.PageSize, data });
+        return Ok(items); 
     }
+
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
@@ -92,10 +94,44 @@ public class JugadoresController : ControllerBase
     }
 
     // helper para front: Jugador existe? 
+
     [HttpGet("exists")]
     public async Task<IActionResult> Exists([FromQuery] string q)
     {
-        var ok = await _db.Jugadores.AnyAsync(j => j.Nombre == q);
-        return Ok(new { exists = ok });
+        if (string.IsNullOrWhiteSpace(q))
+            return BadRequest("El parámetro 'q' es requerido.");
+
+        q = q.Trim();
+
+        bool exists;
+        if (int.TryParse(q, out var id))
+        {
+            exists = await _db.Jugadores
+                .AsNoTracking()
+                .AnyAsync(j => j.JugadorId == id);
+        }
+        else
+        {
+            var n = q.ToLower();
+            exists = await _db.Jugadores
+                .AsNoTracking()
+                .AnyAsync(j => j.Nombre.Trim().ToLower() == n);
+        }
+
+        return Ok(new { exists });
     }
+    [HttpGet("by-name")]
+    public async Task<IActionResult> ByName([FromQuery] string q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+            return BadRequest("El parámetro 'q' es requerido.");
+
+        var jugador = await _db.Jugadores
+            .AsNoTracking()
+            .FirstOrDefaultAsync(j => EF.Functions.Collate(j.Nombre.Trim(), "SQL_Latin1_General_CP1_CI_AI")
+                                       == q.Trim());
+        if (jugador == null) return NotFound();
+        return Ok(jugador);
+    }
+
 }

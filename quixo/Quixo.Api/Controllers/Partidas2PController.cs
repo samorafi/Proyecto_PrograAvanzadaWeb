@@ -5,6 +5,7 @@ using Quixo.Api.Domain;
 using Quixo.Api.Dtos;
 using Quixo.Api.Services;
 
+// Juego para modo de 2 jugadores
 namespace Quixo.Api.Controllers;
 
 [ApiController]

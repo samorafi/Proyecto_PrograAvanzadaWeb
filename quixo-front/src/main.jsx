@@ -1,19 +1,20 @@
+// src/main.jsx
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
-import Inicio from "./pages/Home";
-import NuevaPartida2J from "./pages/NewGame2P";
-import PartidasFinalizadas2J from "./pages/Finalized2P";
-//import Estadisticas from "./paginas/Estadisticas";
+import Home from "./pages/Home";
+import NewGame2P from "./pages/NewGame2P";
+import Finalized2P from "./pages/Finalized2P";
+import RegisterPlayer from "./pages/RegisterPlayer";
 
 const router = createBrowserRouter([
-  { path:"/", element:<App/>, children:[
-    { index:true, element:<Inicio/> },
-    { path:"new-2p", element:<NuevaPartida2J/> },
-    { path:"finalized-2p", element:<PartidasFinalizadas2J/> },
-    //{ path:"/stats", element:<Estadisticas/> },
-  ] }
+  { path: "/", element: <App />, children: [
+    { index: true, element: <Home /> },
+    { path: "registrar", element: <RegisterPlayer /> },
+    { path: "new-2p", element: <NewGame2P /> },
+    { path: "finalizadas", element: <Finalized2P /> },
+  ]},
 ]);
 
 createRoot(document.getElementById("root")).render(

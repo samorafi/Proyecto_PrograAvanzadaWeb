@@ -13,7 +13,19 @@ export default function Inicio(){
       </div>
 
       {/* TARJETAS PRINCIPALES */}
-      <div className="grid grid-3">
+      <div className="grid grid-4">
+        {/* Registrar jugador */}
+        <div className="card">
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:22}}>👤</span>
+            <h3>Registrar jugador</h3>
+          </div>
+          <p>Crea un jugador por su nombre (usuario) para poder usarlo en partidas.</p>
+          <div className="actions">
+            <Link to="/registrar"><button className="btn">Registrar</button></Link>
+          </div>
+        </div>
+
         <div className="card">
           <div style={{display:"flex",alignItems:"center",gap:8}}>
             <span style={{fontSize:22}}>🎮</span>
@@ -48,7 +60,7 @@ export default function Inicio(){
         </div>
       </div>
 
-      {/* BLOQUE INFORMATIVO (opcional) */}
+      {/* BLOQUE INFORMATIVO */}
       <div className="panel">
         <h3 style={{marginTop:0}}>Reglas clave del turno</h3>
         <div className="grid" style={{gap:12}}>

@@ -1,5 +1,5 @@
 namespace Quixo.Api.Domain;
-
+//Clase dominio (modelo de la DB)
 public class Jugador
 {
     public int JugadorId { get; set; }

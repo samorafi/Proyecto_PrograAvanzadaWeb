@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Quixo.Api.Domain;
+//Configuración de Entity Framework Core
 
 namespace Quixo.Api.Data;
 

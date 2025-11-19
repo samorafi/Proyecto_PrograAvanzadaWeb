@@ -1,48 +1,71 @@
-// src/components/Board5x5.jsx
 export default function Board5x5({ board, onPickEdge, disabled }) {
   return (
-    <div style={{
-      display:"grid",
-      gridTemplateColumns:"repeat(5, 64px)",
-      gridAutoRows:"64px",
-      gap:"12px",
-      justifyContent:"center"
-    }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(5, 72px)",
+        gridAutoRows: "72px",
+        gap: "14px",
+        justifyContent: "center",
+      }}
+    >
       {board.map((cell, i) => {
-        const sym = cell; // 'N', 'O', 'X'
-        const isEdge = [0,1,2,3,4, 20,21,22,23,24, 5,10,15, 9,14,19].includes(i) || 
-                       true; 
-
+        const r = Math.floor(i / 5);
+        const c = i % 5;
+        const isEdge = r === 0 || r === 4 || c === 0 || c === 4;
         const clickable = isEdge && !disabled;
+
+        const sym = cell; // 'N' | 'O' | 'X'
+        const showDot = sym !== "N";
+
         return (
           <button
             key={i}
             onClick={() => clickable && onPickEdge(i)}
             disabled={!clickable}
-            style={{
-              position:"relative",
-              width:64, height:64,
-              borderRadius:12,
-              border:"1px solid #2a2f3f",
-              background:"#0f1424",
-              color:"#e5e7eb",
-              opacity: clickable ? 1 : .6
-            }}
             title={clickable ? "Retirar cubo" : ""}
+            style={{
+              position: "relative",
+              width: 72,
+              height: 72,
+              borderRadius: 12,
+              border: "1px solid #2a2f3f",
+              background: "#0f1424",
+              color: "#e5e7eb",
+              opacity: clickable ? 1 : 0.6,
+              boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.02)",
+            }}
           >
-            {/* símbolo */}
+            {showDot && (
+              <span
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: sym === "X" ? "68%" : "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: "#cbd5e1",
+                  opacity: 0.9,
+                  pointerEvents: "none",
+                }}
+              />
+            )}
+
+            {/* Símbolo */}
             {sym !== "N" && (
-              <span style={{ fontSize:28, fontWeight:900, opacity:.9 }}>
+              <span
+                style={{
+                  fontSize: 30,
+                  fontWeight: 900,
+                  letterSpacing: 1,
+                  pointerEvents: "none",
+                }}
+              >
                 {sym}
               </span>
             )}
-
-            {/* puntito */}
-            <span style={{
-              position:"absolute", width:6, height:6, borderRadius:"50%",
-              background:"#cbd5e1", opacity:.9, left:"50%", top:"50%",
-              transform:"translate(-50%, -50%)"
-            }} />
           </button>
         );
       })}
