@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "Pn5jAT/X8QPiwqsI96SoQbwOI+KmsLkWioByMfvjLzI=",
+  "Source": "Quixo.Api",
+  "BasePath": "_content/Quixo.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

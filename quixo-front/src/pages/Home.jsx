@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 
-export default function Inicio(){
+export default function Inicio() {
   return (
-    <div className="grid" style={{gap:20}}>
+    <div className="grid" style={{ gap: 20 }}>
       {/* HERO */}
       <div className="hero">
-        <div style={{fontSize:60,lineHeight:1}}>🟫</div>
+        <div style={{ fontSize: 60, lineHeight: 1 }}>🟫</div>
         <div>
           <h1>Juego Quixo</h1>
-          <p>¡Crea una línea de 5! Modo 2 jugadores, historial y estadísticas.</p>
+          <p>¡Crea una línea de 5! Modos 2 y 4 jugadores, historial y estadísticas.</p>
         </div>
       </div>
 
@@ -16,54 +16,93 @@ export default function Inicio(){
       <div className="grid grid-4">
         {/* Registrar jugador */}
         <div className="card">
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:22}}>👤</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 22 }}>👤</span>
             <h3>Registrar jugador</h3>
           </div>
-          <p>Crea un jugador por su nombre (usuario) para poder usarlo en partidas.</p>
+          <p>Crea un jugador por su nombre para usarlo en partidas.</p>
           <div className="actions">
-            <Link to="/registrar"><button className="btn">Registrar</button></Link>
+            <Link to="/registrar">
+              <button className="btn">Registrar</button>
+            </Link>
           </div>
         </div>
 
+        {/* Nueva partida 2 jugadores */}
         <div className="card">
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:22}}>🎮</span>
-            <h3>Jugar una partida nueva</h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 22 }}>🎮</span>
+            <h3>Jugar una partida (2 jugadores)</h3>
           </div>
-          <p>Inicia un tablero 5×5 con cubos neutros, reloj y turnos O/X.</p>
+          <p>Tablero 5×5, reloj y turnos O/X.</p>
           <div className="actions">
-            <Link to="/new-2p"><button className="btn">Nueva partida</button></Link>
+            <Link to="/new-2p">
+              <button className="btn">Nueva partida 2J</button>
+            </Link>
           </div>
         </div>
 
+        {/* Nueva partida 4 jugadores */}
         <div className="card">
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:22}}>📄</span>
-            <h3>Mostrar y exportar una partida finalizada</h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 22 }}>🎮🎮</span>
+            <h3>Jugar una partida (4 jugadores)</h3>
           </div>
-          <p>Revisa partidas cerradas y descarga su XML (historial + tablero).</p>
+          <p>Dos equipos, orientación de puntos y reglas avanzadas.</p>
           <div className="actions">
-            <Link to="/finalized-2p"><button className="btn secondary">Ver finalizadas</button></Link>
+            <Link to="/new-4p">
+              <button className="btn">Nueva partida 4J</button>
+            </Link>
           </div>
         </div>
 
+        {/* Partidas finalizadas 2 jugadores */}
         <div className="card">
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:22}}>📊</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 22 }}>📄</span>
+            <h3>Partidas finalizadas (2 jugadores)</h3>
+          </div>
+          <p>Historial completo y exportable a XML.</p>
+          <div className="actions">
+            <Link to="/finalized-2p">
+              <button className="btn secondary">Ver finalizadas 2J</button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Partidas finalizadas 4 jugadores */}
+        <div className="card">
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 22 }}>📄📄</span>
+            <h3>Partidas finalizadas (4 jugadores)</h3>
+          </div>
+          <p>Historial, jugadas y estado final del tablero.</p>
+          <div className="actions">
+            <Link to="/finalized-4p">
+              <button className="btn secondary">Ver finalizadas 4J</button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Estadísticas */}
+        <div className="card">
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 22 }}>📊</span>
             <h3>Mostrar estadísticas</h3>
           </div>
-          <p>Efectividad y victorias por jugador (modo 2J).</p>
+          <p>Efectividad y victorias por jugador (2J y 4J próximamente).</p>
           <div className="actions">
-            <Link to="/stats"><button className="btn">Ver estadísticas</button></Link>
+            <Link to="/stats">
+              <button className="btn">Ver estadísticas</button>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* BLOQUE INFORMATIVO */}
+      {/* Reglas rápidas */}
       <div className="panel">
-        <h3 style={{marginTop:0}}>Reglas clave del turno</h3>
-        <div className="grid" style={{gap:12}}>
+        <h3 style={{ marginTop: 0 }}>Reglas clave del turno</h3>
+        <div className="grid" style={{ gap: 12 }}>
           <div className="kpi ok">✔ Primera vuelta: retirar <b>neutros</b>.</div>
           <div className="kpi warn">↔ Empuja por los <b>extremos</b> de la fila/columna.</div>
           <div className="kpi bad">⛔ No retires del <b>símbolo rival</b> ni devuelvas al mismo hueco.</div>

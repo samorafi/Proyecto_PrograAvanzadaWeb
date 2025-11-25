@@ -11,6 +11,7 @@ builder.Services.AddDbContext<QuixoDbContext>(opts =>
 // Servicios
 builder.Services.AddScoped<JugadoresService>();
 builder.Services.AddScoped<ReglasQuixo2P>();
+builder.Services.AddScoped<ReglasQuixo4P>();   // <--- recomendado
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -21,11 +22,11 @@ const string CORS = "_front";
 builder.Services.AddCors(o =>
 {
     o.AddPolicy(CORS, p => p.WithOrigins("http://localhost:5173")
-        .AllowAnyHeader().AllowAnyMethod());
+        .AllowAnyHeader()
+        .AllowAnyMethod());
 });
 
 var app = builder.Build();
-app.UseCors(CORS);
 
 if (app.Environment.IsDevelopment())
 {
@@ -33,5 +34,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();       
+app.UseCors(CORS);
+app.UseAuthorization(); 
 app.MapControllers();
+
 app.Run();

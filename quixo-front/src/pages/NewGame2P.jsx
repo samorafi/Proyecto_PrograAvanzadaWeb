@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { jugadores, partidas2p } from "../services/api";
 import { useTimer, fmtHMS } from "../hooks/useTimer";
 import Board5x5 from "../components/Board5x5";
-import { emptyBoard, rc, pushAndInsert, hasFive } from "../utils/board";
+import { emptyBoard, rc, pushAndInsert, hasFive } from "../utils/board2p";
 
 export default function NewGame2P() {
   // ===== Estado principal =====

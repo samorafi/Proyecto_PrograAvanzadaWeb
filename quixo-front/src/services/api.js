@@ -61,3 +61,30 @@ export const partidas2p = {
 
   finalizadas: () => axios.get(`${API}/api/partidas-2p/finalizadas`),
 };
+
+export const partidas4p = {
+  create: (a1Id, a2Id, b1Id, b2Id) =>
+    axios.post(`${API}/api/partidas/4p/crear`, {
+      equipoA1Id: a1Id,
+      equipoA2Id: a2Id,
+      equipoB1Id: b1Id,
+      equipoB2Id: b2Id,
+    }),
+
+  jugada: (id, historialXml, tableroXml) =>
+    axios.post(`${API}/api/partidas/4p/${id}/jugada`, {
+      historialXml,
+      tableroXml,
+    }),
+
+  finalizar: (id, duracionSegundos, ganadorEquipo, tableroFinalXml) =>
+    axios.post(`${API}/api/partidas/4p/${id}/finalizar`, {
+      duracionSegundos,
+      ganadorEquipo,
+      tableroFinalXml,
+    }),
+
+  get: (id) => axios.get(`${API}/api/partidas/4p/${id}`),
+
+  finalizadas: () => axios.get(`${API}/api/partidas/4p/finalizadas`),
+};
