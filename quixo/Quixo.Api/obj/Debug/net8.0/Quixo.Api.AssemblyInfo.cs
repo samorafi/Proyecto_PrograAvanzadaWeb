@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Quixo.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5135cb55d9edf0c48eac1ab3face17969a4bf424")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+237a0d2c70b84e5fe7411a0f2f2819c0ade3f197")]
 [assembly: System.Reflection.AssemblyProductAttribute("Quixo.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Quixo.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

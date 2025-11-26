@@ -22,7 +22,7 @@ CREATE TABLE dbo.Partidas (
   FechaSobrescrita  DATETIME2(0)      NULL,
   FechaFinalizada   DATETIME2(0)      NULL,
 
-  -- Duración total en segundos
+  -- Duraciï¿½n total en segundos
   DuracionSegundos  INT               NULL,
 
   -- Participantes modo 2 jugadores (O y X)
@@ -56,7 +56,7 @@ CREATE TABLE dbo.Equipos4P (
 );
 
 -- =========================
--- TABLA: PartidasEquipos4P (qué equipos jugaron una partida 4P)
+-- TABLA: PartidasEquipos4P (quï¿½ equipos jugaron una partida 4P)
 -- =========================
 CREATE TABLE dbo.PartidasEquipos4P (
   PartidaEquipoId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,

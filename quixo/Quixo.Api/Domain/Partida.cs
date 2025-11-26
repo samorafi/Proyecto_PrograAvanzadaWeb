@@ -15,13 +15,14 @@ public class Partida
     public int? JugadorOid { get; set; }
     public int? JugadorXid { get; set; }
 
+
     public int? EquipoA1Id { get; set; }
     public int? EquipoA2Id { get; set; }
     public int? EquipoB1Id { get; set; }
     public int? EquipoB2Id { get; set; }
 
     public string? GanadorSimbolo { get; set; } // 'O' | 'X'
-    public string? GanadorEquipo  { get; set; } // 'A' | 'B'
+    public string? GanadorEquipo { get; set; } // 'A' | 'B'
 
     public string? TableroFinalXml { get; set; }
     public string HistorialXml { get; set; } = "<Historial/>";
