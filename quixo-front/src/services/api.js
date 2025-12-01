@@ -88,3 +88,8 @@ export const partidas4p = {
 
   finalizadas: () => axios.get(`${API}/api/partidas/4p/finalizadas`),
 };
+
+export const partidasFinalizadas = {
+  exportXmlUrl: (id) => `${API}/api/partidas/finalizadas/${id}/export-xml`,
+};
+
