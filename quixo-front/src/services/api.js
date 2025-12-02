@@ -93,3 +93,15 @@ export const partidasFinalizadas = {
   exportXmlUrl: (id) => `${API}/api/partidas/finalizadas/${id}/export-xml`,
 };
 
+export const stats = {
+  jugadores2p: async () => {
+    const r = await axios.get(`${API}/api/estadisticas/2p`);
+    return r.data ?? [];
+  },
+  equipos4p: async () => {
+    const r = await axios.get(`${API}/api/estadisticas/4p`);
+    return r.data ?? [];
+  },
+};
+
+

@@ -8,10 +8,10 @@ import Home from "./pages/Home";
 import NewGame2P from "./pages/NewGame2P";
 import Finalized2P from "./pages/Finalized2P";
 import RegisterPlayer from "./pages/RegisterPlayer";
+import NewGame4P from "./pages/NewGame4P";
+import Finalized4P from "./pages/Finalized4P"; 
+import Stats from "./pages/Stats";
 
-// ==== placeholders 4P (los creamos luego) ====
-import NewGame4P from "./pages/NewGame4P";       // <<— lo crearemos juntos
-import Finalized4P from "./pages/Finalized4P";   // <<— lo crearemos juntos
 
 const router = createBrowserRouter([
   {
@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       { path: "finalized-4p", element: <Finalized4P /> },
 
       // ==== Stats ====
-      { path: "stats", element: <div>Página de estadísticas (temp)</div> },
+      { path: "stats", element: <Stats /> },
     ],
   },
 ]);

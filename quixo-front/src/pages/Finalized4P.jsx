@@ -15,12 +15,21 @@ function parseHistorial4P(xml) {
       const jugador = n.getAttribute("jugador") || "";
       const retirado = Number(n.getAttribute("retirado") || "0");
       const eje = n.getAttribute("eje") || "";
-      const indice = Number(n.getAttribute("indice") || "0");
-      const extremo = n.getAttribute("extremo") || "";
-      const simbolo = n.getAttribute("simbolo") || "";
-      const punto = n.getAttribute("punto") || null;
 
-      // Calcular casilla de destino
+      const indiceAttr = n.getAttribute("indice");
+      const indexAttr = n.getAttribute("index");
+      const indice = Number((indiceAttr ?? indexAttr ?? "0"));
+
+      const extremo = n.getAttribute("extremo") || "";
+
+      const simboloAttr = n.getAttribute("simbolo");
+      const symbolAttr = n.getAttribute("symbol");
+      const simbolo = (simboloAttr ?? symbolAttr ?? "");
+
+      const puntoAttr = n.getAttribute("punto");
+      const pointAttr = n.getAttribute("point");
+      const punto = (puntoAttr ?? pointAttr ?? null);
+
       let destR = 0;
       let destC = 0;
 
@@ -55,6 +64,7 @@ function parseHistorial4P(xml) {
     return [];
   }
 }
+
 
 function buildBoard4P(moves, upto) {
   let b = emptyBoard4P();

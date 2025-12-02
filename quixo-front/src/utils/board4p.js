@@ -78,21 +78,28 @@ export function board4PToXml(board) {
   return xml;
 }
 
-export function appendHistory4P(prevXml, jugada) {
-  const closingIndex = prevXml.lastIndexOf("</Historial>");
-  const base = prevXml.slice(0, closingIndex);
+export function appendHistory4P(xml, jugada, board) {
+  const tabXml = board4PToXml([...board]);
+  const turno = (xml.match(/<Turno /g) || []).length + 1;
+  const indice = jugada.indice ?? jugada.index ?? 0;
 
-  const nodo = `
-<Jugada 
-  jugador="${jugada.jugador}"
-  retirado="${jugada.retirado}"
-  eje="${jugada.eje}"
-  indice="${jugada.index}"
-  extremo="${jugada.extremo}"
-  simbolo="${jugada.symbol}"
-  punto="${jugada.point}"
-/>
-`;
+  const jugadaXml = `
+    <Turno n="${turno}">
+      <Jugada
+        jugador="${jugada.jugador}"
+        retiro="${jugada.retirado}"
+        eje="${jugada.eje}"
+        indice="${indice}"
+        extremo="${jugada.extremo}"
+        simbolo="${jugada.symbol}"
+        punto="${jugada.point ?? ""}"
+        horaUtc="${new Date().toISOString()}"
+      />
+      ${tabXml}
+    </Turno>
+  `.trim();
 
-  return base + nodo + "</Historial>";
+  return xml.trim() === "<Historial/>"
+    ? `<Historial>${jugadaXml}</Historial>`
+    : xml.replace("</Historial>", `${jugadaXml}</Historial>`);
 }

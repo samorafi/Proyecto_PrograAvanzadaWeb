@@ -189,8 +189,7 @@ export default function NewGame4P() {
     });
 
     setMsg(
-      `Cubo seleccionado. Elige un extremo para empujar (${options.length} opción${
-        options.length === 1 ? "" : "es"
+      `Cubo seleccionado. Elige un extremo para empujar (${options.length} opción${options.length === 1 ? "" : "es"
       }).`
     );
   }
@@ -203,7 +202,7 @@ export default function NewGame4P() {
     });
   }
 
-  function confirmarExtremo(eje, extremo) {
+  async function confirmarExtremo(eje, extremo) {
     if (!pending) return;
 
     const { i, r, c, pointTarget } = pending;
@@ -228,11 +227,13 @@ export default function NewGame4P() {
         point: pointTarget,
       };
 
-      const nuevoHist = appendHistory4P(histXml, jugada);
+      const snapshot = [...nb];
+      const nuevoHist = appendHistory4P(histXml, jugada, snapshot);
       setHistXml(nuevoHist);
 
-      const tableroXml = board4PToXml(nb);
-      partidas4p.jugada(pid, nuevoHist, tableroXml);
+      // Ahora sí guardamos en BD el tablero final
+      const tableroXml = board4PToXml(snapshot);
+      await partidas4p.jugada(pid, nuevoHist, tableroXml);
 
       if (hasFive4P(nb, enemySymbol)) {
         const ganadorEquipo = enemyTeam;
