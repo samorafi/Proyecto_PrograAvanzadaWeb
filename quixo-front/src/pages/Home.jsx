@@ -65,7 +65,7 @@ export default function Inicio() {
           <p>Historial completo y exportable a XML.</p>
           <div className="actions">
             <Link to="/finalized-2p">
-              <button className="btn secondary">Ver finalizadas 2J</button>
+              <button className="btn">Ver finalizadas 2J</button>
             </Link>
           </div>
         </div>
@@ -76,10 +76,10 @@ export default function Inicio() {
             <span style={{ fontSize: 22 }}>📄📄</span>
             <h3>Partidas finalizadas (4 jugadores)</h3>
           </div>
-          <p>Historial, jugadas y estado final del tablero.</p>
+          <p>Historial completo y exportable a XML.</p>
           <div className="actions">
             <Link to="/finalized-4p">
-              <button className="btn secondary">Ver finalizadas 4J</button>
+              <button className="btn">Ver finalizadas 4J</button>
             </Link>
           </div>
         </div>

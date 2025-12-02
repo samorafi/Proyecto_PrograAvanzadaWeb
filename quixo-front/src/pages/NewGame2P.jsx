@@ -20,9 +20,9 @@ export default function NewGame2P() {
   const [mode, setMode] = useState(null); // "2P" | "4P"
 
   // ===== Jugadores (dropdowns) =====
-  const [allPlayers, setAllPlayers] = useState([]); 
-  const [selO, setSelO] = useState(""); 
-  const [selX, setSelX] = useState(""); 
+  const [allPlayers, setAllPlayers] = useState([]);
+  const [selO, setSelO] = useState("");
+  const [selX, setSelX] = useState("");
   const [formErr, setFormErr] = useState("");
   const [loadingList, setLoadingList] = useState(false);
 
@@ -48,16 +48,19 @@ export default function NewGame2P() {
   }
 
   const totalJugadas = (xml) => (xml.match(/<Jugada /g) || []).length;
-  const addJugada = (xml, jx) =>
-    xml.trim() === "<Historial/>" ? `<Historial>${jx}</Historial>` : xml.replace("</Historial>", `${jx}</Historial>`);
+  const addTurn = (xml, turnoBlock) =>
+    xml.trim() === "<Historial/>"
+      ? `<Historial>${turnoBlock}</Historial>`
+      : xml.replace("</Historial>", `${turnoBlock}</Historial>`);
+
   const tabXml = (b) => `<Tablero>${b.map((s, i) => `<Celda i="${i}" simbolo="${s}" />`).join("")}</Tablero>`;
 
   // ===== Cargar lista de jugadores =====
   async function cargarJugadores() {
     try {
       setLoadingList(true);
-      const data = await jugadores.list(); 
-      setAllPlayers(data);            
+      const data = await jugadores.list();
+      setAllPlayers(data);
     } catch {
       setAllPlayers([]);
     } finally {
@@ -68,7 +71,7 @@ export default function NewGame2P() {
 
   // abrir modal (carga lista)
   function abrirInicio() {
-    if (pid && !finished) return; 
+    if (pid && !finished) return;
     setShowStart(true);
     setMode("2P");
     setSelO("");
@@ -160,9 +163,13 @@ export default function NewGame2P() {
 
       const turnoNum = totalJugadas(histXml) + 1;
       const jugada = `<Jugada turno="${turnoNum}" jugador="${turn}" retiro="${i}" eje="${eje}" extremo="${extremo}" horaUtc="${new Date().toISOString()}" />`;
-      const nuevoHist = addJugada(histXml, jugada);
+      const tableroSnap = tabXml(nb);
+      const turnoBlock = `<Turno n="${turnoNum}">${jugada}${tableroSnap}</Turno>`;
+
+      const nuevoHist = addTurn(histXml, turnoBlock);
       setHistXml(nuevoHist);
-      partidas2p.jugada(pid, nuevoHist, tabXml(nb));
+      partidas2p.jugada(pid, nuevoHist, tableroSnap);
+
 
       const rival = turn === "O" ? "X" : "O";
       if (hasFive(nb, rival)) {
