@@ -24,31 +24,74 @@ export function canPickCube4P(cell, subPlayer) {
   return cell.point === subPlayer;
 }
 
-export function pushAndInsert4P(board, eje, index, extremo, symbol, point) {
+export function pushAndInsert4P(board, eje, index, extremo, symbol, point, retiroIndex) {
   const b = JSON.parse(JSON.stringify(board));
 
   if (eje === "ROW") {
     const r = index;
-    const row = [0, 1, 2, 3, 4].map((c) => b[idx4(r, c)]);
-    if (extremo === "START") {
-      row.pop();
-      row.unshift({ symbol, point });
+    const lineIdx = [0, 1, 2, 3, 4].map((c) => idx4(r, c));
+    const line = lineIdx.map((i) => b[i]);
+
+    const retiroPos = lineIdx.indexOf(retiroIndex);
+    const from = extremo === "START" ? 0 : 4;
+
+    if (retiroPos === -1) {
+      if (extremo === "START") {
+        line.pop();
+        line.unshift({ symbol, point });
+      } else {
+        line.shift();
+        line.push({ symbol, point });
+      }
+    } else if (from < retiroPos) {
+      // Empuja desde START hacia la casilla retirada (0 -> retiroPos)
+      for (let pos = retiroPos; pos > from; pos--) {
+        line[pos] = line[pos - 1];
+      }
+      line[from] = { symbol, point };
+    } else if (from > retiroPos) {
+      // Empuja desde END hacia la casilla retirada (4 -> retiroPos)
+      for (let pos = retiroPos; pos < from; pos++) {
+        line[pos] = line[pos + 1];
+      }
+      line[from] = { symbol, point };
     } else {
-      row.shift();
-      row.push({ symbol, point });
+      // Inserción exactamente donde se retiró
+      line[retiroPos] = { symbol, point };
     }
-    [0, 1, 2, 3, 4].forEach((c, k) => (b[idx4(r, c)] = row[k]));
+
+    lineIdx.forEach((cellIdx, k) => (b[cellIdx] = line[k]));
   } else {
     const c = index;
-    const col = [0, 1, 2, 3, 4].map((r) => b[idx4(r, c)]);
-    if (extremo === "START") {
-      col.pop();
-      col.unshift({ symbol, point });
+    const lineIdx = [0, 1, 2, 3, 4].map((r) => idx4(r, c));
+    const line = lineIdx.map((i) => b[i]);
+
+    const retiroPos = lineIdx.indexOf(retiroIndex);
+    const from = extremo === "START" ? 0 : 4;
+
+    if (retiroPos === -1) {
+      if (extremo === "START") {
+        line.pop();
+        line.unshift({ symbol, point });
+      } else {
+        line.shift();
+        line.push({ symbol, point });
+      }
+    } else if (from < retiroPos) {
+      for (let pos = retiroPos; pos > from; pos--) {
+        line[pos] = line[pos - 1];
+      }
+      line[from] = { symbol, point };
+    } else if (from > retiroPos) {
+      for (let pos = retiroPos; pos < from; pos++) {
+        line[pos] = line[pos + 1];
+      }
+      line[from] = { symbol, point };
     } else {
-      col.shift();
-      col.push({ symbol, point });
+      line[retiroPos] = { symbol, point };
     }
-    [0, 1, 2, 3, 4].forEach((r, k) => (b[idx4(r, c)] = col[k]));
+
+    lineIdx.forEach((cellIdx, k) => (b[cellIdx] = line[k]));
   }
 
   return b;

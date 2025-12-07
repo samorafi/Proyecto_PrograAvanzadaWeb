@@ -9,6 +9,7 @@ import {
   hasFive4P,
   board4PToXml,
   appendHistory4P,
+  isEdge4P,
 } from "../utils/board4p";
 
 export default function NewGame4P() {
@@ -27,6 +28,7 @@ export default function NewGame4P() {
   const [finished, setFinished] = useState(false);
   const [board, setBoard] = useState(emptyBoard4P());
   const [currentPlayer, setCurrentPlayer] = useState("A1"); // "A1" | "B1" | "A2" | "B2"
+  const [firstLapDone, setFirstLapDone] = useState(false);
   const [histXml, setHistXml] = useState("<Historial/>");
   const { seconds, reset } = useTimer(pid !== null && !finished);
   const [msg, setMsg] = useState("");
@@ -136,6 +138,7 @@ export default function NewGame4P() {
       setCurrentPlayer("A1");
       setHistXml("<Historial/>");
       reset();
+      setFirstLapDone(false);
       setMsg("¡Partida 4 jugadores creada! Turno: A1");
       setShowStart(false);
     } catch {
@@ -150,7 +153,8 @@ export default function NewGame4P() {
     setCurrentPlayer("A1");
     setFinished(false);
     reset();
-    setMsg("Partida reiniciada (se sobreescribirá el historial al guardar nuevas jugadas).");
+    setFirstLapDone(false);
+    setMsg("Partida reiniciada.");
   }
 
   function defaultPointTarget(subPlayer) {
@@ -165,21 +169,19 @@ export default function NewGame4P() {
     if (!pid || finished) return;
 
     const { r, c } = rc4(i);
-    const esPeriferia = r === 0 || r === 4 || c === 0 || c === 4;
-    if (!esPeriferia) {
+
+    if (!isEdge4P(i)) {
       setMsg("Solo puedes retirar de la periferia.");
       return;
     }
 
-    const jugadas = totalJugadas(histXml);
-    if (jugadas < 4 && board[i].symbol !== "N") {
+    if (!firstLapDone && board[i].symbol !== "N") {
       setMsg("Primera vuelta: solo cubos neutros.");
       return;
     }
 
     const options = legalOptionsFor(r, c);
     const pointTarget = defaultPointTarget(currentPlayer);
-
     setPending({
       i,
       r,
@@ -214,7 +216,17 @@ export default function NewGame4P() {
     const enemySymbol = enemyTeam === "A" ? "O" : "X";
 
     try {
-      const nb = pushAndInsert4P(board, eje, index, extremo, mySymbol, pointTarget);
+      const nb = pushAndInsert4P(board, eje, index, extremo, mySymbol, pointTarget, i);
+
+      if (!firstLapDone) {
+        const peripheryFull = nb.every(
+          (cell, idx) => !isEdge4P(idx) || cell.symbol !== "N"
+        );
+        if (peripheryFull) {
+          setFirstLapDone(true);
+        }
+      }
+
       setBoard(nb);
 
       const jugada = {
@@ -231,7 +243,6 @@ export default function NewGame4P() {
       const nuevoHist = appendHistory4P(histXml, jugada, snapshot);
       setHistXml(nuevoHist);
 
-      // Ahora sí guardamos en BD el tablero final
       const tableroXml = board4PToXml(snapshot);
       await partidas4p.jugada(pid, nuevoHist, tableroXml);
 
@@ -273,6 +284,7 @@ export default function NewGame4P() {
       setPending(null);
     }
   }
+
 
   const jugando = !!pid && !finished;
 

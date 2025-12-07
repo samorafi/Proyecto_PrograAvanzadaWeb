@@ -12,6 +12,7 @@ export default function NewGame2P() {
   const [board, setBoard] = useState(emptyBoard()); // ['N'|'O'|'X'] * 25
   const [turn, setTurn] = useState("O");
   const [histXml, setHistXml] = useState("<Historial/>");
+  const [firstLapDone, setFirstLapDone] = useState(false);
   const { seconds, reset } = useTimer(pid !== null && !finished);
   const [msg, setMsg] = useState("");
 
@@ -109,6 +110,7 @@ export default function NewGame2P() {
       setBoard(emptyBoard());
       setTurn("O");
       setHistXml("<Historial/>");
+      setFirstLapDone(false);
       reset();
       setMsg("¡Partida creada! Turno: O");
       setShowStart(false);
@@ -126,6 +128,7 @@ export default function NewGame2P() {
       setHistXml("<Historial/>");
       setTurn("O");
       setFinished(false);
+      setFirstLapDone(false);
       reset();
       setMsg("Partida reiniciada.");
     } catch {
@@ -141,60 +144,94 @@ export default function NewGame2P() {
     const esPeriferia = r === 0 || r === 4 || c === 0 || c === 4;
     if (!esPeriferia) return setMsg("Solo puedes retirar de la periferia.");
 
-    const jugadas = totalJugadas(histXml);
-    if (jugadas < 25 && board[i] !== "N") return setMsg("Primera vuelta: solo cubos neutros.");
-    if (board[i] === (turn === "O" ? "X" : "O")) return setMsg("No puedes retirar del símbolo rival.");
+    if (!firstLapDone && board[i] !== "N") {
+      return setMsg("Primera vuelta: solo cubos neutros.");
+    }
+
+    if (board[i] === (turn === "O" ? "X" : "O")) {
+      return setMsg("No puedes retirar del símbolo rival.");
+    }
 
     const options = legalOptionsFor(r, c);
     setPending({ i, r, c, options });
-    setMsg(`Elige un extremo para empujar (${options.length} opción${options.length === 1 ? "" : "es"}).`);
+    setMsg(
+      `Elige un extremo para empujar (${options.length} opción${options.length === 1 ? "" : "es"
+      }).`
+    );
   }
 
   // ===== Confirmar extremo =====
   function confirmarExtremo(eje, extremo) {
     if (!pending) return;
+
     const { i } = pending;
     const { r, c } = rc(i);
-    const index = (eje === "COL") ? c : r;
+    const index = eje === "COL" ? c : r;
 
     try {
-      const nb = pushAndInsert(board, eje, index, extremo, turn);
-      setBoard(nb);
+      const nb = pushAndInsert(board, eje, index, extremo, turn, i);
 
+      const rival = turn === "O" ? "X" : "O";
+
+      if (hasFive(nb, rival)) {
+        const ganadorNombre = rival === "O" ? players.oName : players.xName;
+        const tableroSnap = tabXml(nb);
+        const turnoNum = totalJugadas(histXml) + 1;
+        const jugada = `<Jugada turno="${turnoNum}" jugador="${turn}" retiro="${i}" eje="${eje}" extremo="${extremo}" horaUtc="${new Date().toISOString()}" />`;
+        const turnoBlock = `<Turno n="${turnoNum}">${jugada}${tableroSnap}</Turno>`;
+        const nuevoHist = addTurn(histXml, turnoBlock);
+
+        setBoard(nb);
+        setHistXml(nuevoHist);
+
+        setMsg(`¡Gana ${ganadorNombre} (${rival})!`);
+        partidas2p.jugada(pid, nuevoHist, tableroSnap);
+        partidas2p.finalizar(pid, seconds, rival, tableroSnap);
+        setFinished(true);
+        setPending(null);
+        return;
+      }
+
+      if (hasFive(nb, turn)) {
+        const ganadorNombre = turn === "O" ? players.oName : players.xName;
+        const tableroSnap = tabXml(nb);
+        const turnoNum = totalJugadas(histXml) + 1;
+        const jugada = `<Jugada turno="${turnoNum}" jugador="${turn}" retiro="${i}" eje="${eje}" extremo="${extremo}" horaUtc="${new Date().toISOString()}" />`;
+        const turnoBlock = `<Turno n="${turnoNum}">${jugada}${tableroSnap}</Turno>`;
+        const nuevoHist = addTurn(histXml, turnoBlock);
+
+        setBoard(nb);
+        setHistXml(nuevoHist);
+
+        setMsg(`¡Gana ${ganadorNombre} (${turn})!`);
+        partidas2p.jugada(pid, nuevoHist, tableroSnap);
+        partidas2p.finalizar(pid, seconds, turn, tableroSnap);
+        setFinished(true);
+        setPending(null);
+        return;
+      }
+
+      const tableroSnap = tabXml(nb);
       const turnoNum = totalJugadas(histXml) + 1;
       const jugada = `<Jugada turno="${turnoNum}" jugador="${turn}" retiro="${i}" eje="${eje}" extremo="${extremo}" horaUtc="${new Date().toISOString()}" />`;
-      const tableroSnap = tabXml(nb);
       const turnoBlock = `<Turno n="${turnoNum}">${jugada}${tableroSnap}</Turno>`;
-
       const nuevoHist = addTurn(histXml, turnoBlock);
+
+      setBoard(nb);
       setHistXml(nuevoHist);
       partidas2p.jugada(pid, nuevoHist, tableroSnap);
 
-
-      const rival = turn === "O" ? "X" : "O";
-      if (hasFive(nb, rival)) {
-        const ganadorNombre = rival === "O" ? players.oName : players.xName;
-        setMsg(`¡Gana ${ganadorNombre} (${rival})!`);
-        partidas2p.finalizar(pid, seconds, rival, tabXml(nb));
-        setFinished(true);
-        return;
-      }
-      if (hasFive(nb, turn)) {
-        const ganadorNombre = turn === "O" ? players.oName : players.xName;
-        setMsg(`¡Gana ${ganadorNombre} (${turn})!`);
-        partidas2p.finalizar(pid, seconds, turn, tabXml(nb));
-        setFinished(true);
-        return;
-      }
-
-      setTurn(rival);
-      setMsg(`Turno: ${rival}`);
-    } catch {
+      const nextTurn = turn === "O" ? "X" : "O";
+      setTurn(nextTurn);
+      setMsg(`Turno de ${nextTurn === "O" ? players.oName : players.xName}`);
+    } catch (e) {
+      console.error(e);
       setMsg("Error registrando jugada.");
     } finally {
       setPending(null);
     }
   }
+
 
   const jugando = !!pid && !finished;
 
