@@ -228,51 +228,13 @@ CREATE TABLE dbo.EstadisticasEquipos4P (
     \item \textbf{EstadisticasEquipos4P:} estadísticas agregadas para equipos en modo 4 jugadores.
 \end{itemize}
 
-\subsection{Diagrama de base de datos (PGF/TikZ)}
+\subsection{Diagrama de base de datos}
 
-Diagrama simplificado de las principales tablas y sus relaciones:
+El diagrama completo de la base de datos puede consultarse en el siguiente enlace:
 
-\begin{center}
-\begin{tikzpicture}[font=\small, node distance=2.5cm]
-
-\tikzstyle{table} = [
-  rectangle,
-  draw,
-  rounded corners,
-  fill=gray!10,
-  text centered,
-  minimum width=3.5cm,
-  minimum height=1cm
-]
-
-\node[table] (Jugadores) {Jugadores};
-
-\node[table, right=of Jugadores] (Partidas) {Partidas};
-
-\node[table, below=of Partidas] (PartidaParticipantes) {PartidaParticipantes};
-
-\node[table, below=of Jugadores] (Equipos4P) {Equipos4P};
-
-\node[table, right=of PartidaParticipantes] (PartidasEquipos4P) {PartidasEquipos4P};
-
-\node[table, below=of Equipos4P] (EstJug) {EstadisticasJugadores2P};
-
-\node[table, below=of PartidasEquipos4P] (EstEq) {EstadisticasEquipos4P};
-
-\draw[->] (PartidaParticipantes) -- (Partidas);
-\draw[->] (PartidaParticipantes) -- (Jugadores);
-
-\draw[->] (PartidasEquipos4P) -- (Partidas);
-\draw[->] (PartidasEquipos4P) -- (Equipos4P);
-
-\draw[->] (Equipos4P) -- (Jugadores);
-
-\draw[->] (EstJug) -- (Jugadores);
-\draw[->] (EstEq) -- (Equipos4P);
-
-\end{tikzpicture}
-\end{center}
-
+\begin{itemize}
+    \item \url{https://github.com/samorafi/Proyecto_PrograAvanzadaWeb/blob/main/DB/DBQuixo.png}
+\end{itemize}
 
 %====================================================
 \section{Instructivo de instalación, compilación y ejecución}
