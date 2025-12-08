@@ -1,0 +1,426 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+
+\geometry{margin=2.5cm}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue
+}
+
+\title{README -- Proyecto Web Quixo}
+\author{GRUPO 4 \\ Programación Avanzada Web}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+%====================================================
+\section{Información general del proyecto}
+%====================================================
+
+\begin{description}
+    \item[Número de grupo:] \textbf{4}
+    \item[Nombre del curso:] \textbf{Programación Avanzada Web}
+    \item[Nombre de la aplicación:] \textbf{Proyecto Web Quixo}
+\end{description}
+
+Breve descripción del proyecto:
+
+\medskip
+
+La aplicación web desarrollada implementa el juego de mesa \textbf{Quixo}, una evolución del clásico Tic-tac-toe (``gato''). 
+Permite jugar en modo \textbf{dos jugadores (2P)} y \textbf{cuatro jugadores (4P)}, visualizar y exportar partidas finalizadas,
+así como consultar estadísticas de jugadores y equipos.
+
+%====================================================
+\section{Integrantes del grupo}
+%====================================================
+
+A continuación se muestran los integrantes del grupo con nombre completo y carné:
+
+\begin{longtable}{|l|l|}
+\hline
+\textbf{Nombre completo}      & \textbf{Carné} \\
+\hline
+Sebastián Mora Figueroa        & FI22027357 \\ \hline
+Kevin Sánchez Seas             & FI22025309 \\ \hline
+Fiorella Portuguez Rojas       & FI22024660 \\ \hline
+\end{longtable}
+
+%====================================================
+\section{Información de Git de los integrantes}
+%====================================================
+
+En la siguiente tabla se detalla la información de Git de cada integrante 
+(usuario y correo de Git):
+
+\begin{longtable}{|l|l|l|}
+\hline
+\textbf{Nombre}                 & \textbf{Usuario Git} & \textbf{Correo Git}              \\
+\hline
+Sebastián Mora Figueroa        & samorafi             & sebasmora172522@gmail.com        \\ \hline
+Kevin Sánchez Seas             & kasanche11           &                                  \\ \hline
+Fiorella Portuguez Rojas       & fioportu             & portuguezfiore@gmail.com         \\ \hline
+\end{longtable}
+
+
+%====================================================
+\section{Tecnologías, tipo de aplicación y arquitectura}
+%====================================================
+
+\subsection{Frameworks y herramientas utilizadas}
+
+A continuación se listan los frameworks y herramientas principales utilizados:
+
+\begin{itemize}
+    \item \textbf{Tipo de aplicación:} SPA (Single Page Application).
+    \item \textbf{Frontend:} React (Vite).
+    \item \textbf{Backend:} ASP.NET Core (Web API).
+    \item \textbf{ORM:} Entity Framework Core.
+    \item \textbf{Base de datos:} SQL Server.
+    \item \textbf{Cliente HTTP:} Axios (frontend) para consumir la API.
+    \item \textbf{Enrutamiento en frontend:} React Router DOM.
+    \item \textbf{Editor/IDE:} Visual Studio Code
+    \item \textbf{Control de versiones:} GitHub.
+\end{itemize}
+
+
+\subsection{Tipo de aplicación: SPA}
+
+La aplicación es una \textbf{SPA (Single Page Application)} porque:
+\begin{itemize}
+    \item El frontend en React se carga una sola vez en el navegador.
+    \item La navegación entre vistas (menú principal, juego, historial, estadísticas) se realiza de forma dinámica en el cliente,
+          usando React Router, sin recargar completamente la página.
+    \item La comunicación con el servidor se realiza mediante peticiones a una Web API (REST) para obtener y enviar datos (jugadores, partidas, estadísticas).
+\end{itemize}
+
+\subsection{Arquitectura utilizada: Web API + SPA}
+
+La arquitectura general combina:
+\begin{itemize}
+    \item \textbf{Backend ASP.NET Core Web API} con una estructura por capas (controladores, capa de dominio/servicios, acceso a datos con EF Core).
+    \item \textbf{Frontend SPA en React} que consume los endpoints de la Web API.
+    \item \textbf{Base de datos SQL Server} para persistir jugadores, partidas, historial y estadísticas.
+\end{itemize}
+
+Razones para utilizar esta arquitectura:
+\begin{itemize}
+    \item Separación clara de responsabilidades entre backend (lógica de negocio, persistencia) y frontend (interfaz de usuario).
+    \item Facilidad para exponer servicios REST que podrían ser consumidos por otras interfaces en el futuro.
+    \item React y ASP.NET Core son tecnologías ampliamente utilizadas, con buena documentación y soporte.
+\end{itemize}
+
+%====================================================
+\section{Definición de la base de datos}
+%====================================================
+
+La aplicación utiliza una base de datos relacional en \textbf{SQL Server}. 
+A continuación se muestra el script simplificado de las tablas principales:
+
+\subsection{Script de creación de tablas}
+
+\begin{lstlisting}[language=SQL]
+-- TABLA: Jugadores
+CREATE TABLE dbo.Jugadores (
+  JugadorId       INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  Nombre          NVARCHAR(100)     NOT NULL,
+  FechaCreacion   DATETIME2(3)      NOT NULL DEFAULT SYSUTCDATETIME()
+);
+
+-- TABLA: Partidas
+CREATE TABLE dbo.Partidas (
+  PartidaId         INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  Modo              CHAR(2)           NOT NULL
+    CONSTRAINT CK_Partidas_Modo CHECK (Modo IN ('2P','4P')),
+  FechaCreacion     DATETIME2(0)      NOT NULL DEFAULT SYSDATETIME(),
+  FechaSobrescrita  DATETIME2(0)      NULL,
+  FechaFinalizada   DATETIME2(0)      NULL,
+  DuracionSegundos  INT               NULL,
+  JugadorOid        INT               NULL,
+  JugadorXid        INT               NULL,
+  EquipoA1Id        INT               NULL,
+  EquipoA2Id        INT               NULL,
+  EquipoB1Id        INT               NULL,
+  EquipoB2Id        INT               NULL,
+  GanadorSimbolo    CHAR(1)           NULL,  -- 'O' o 'X' (solo 2P)
+  GanadorEquipo     CHAR(1)           NULL,  -- 'A' o 'B' (solo 4P)
+  TableroFinalXml   XML               NULL,
+  HistorialXml      XML               NOT NULL
+);
+
+-- TABLA: Equipos4P
+CREATE TABLE dbo.Equipos4P (
+  EquipoId       INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  Jugador1Id     INT               NOT NULL,
+  Jugador2Id     INT               NOT NULL,
+  FechaCreacion  DATETIME2(3)      NOT NULL DEFAULT SYSUTCDATETIME()
+);
+
+-- TABLA: PartidasEquipos4P
+CREATE TABLE dbo.PartidasEquipos4P (
+  PartidaEquipoId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  PartidaId       INT               NOT NULL,   -- Modo = '4P'
+  EquipoId        INT               NOT NULL,   -- Referencia a Equipos4P
+  Letra           CHAR(1)           NOT NULL
+    CONSTRAINT CK_PartidasEquipos4P_Letra CHECK (Letra IN ('A','B')),
+  Simbolo         CHAR(1)           NOT NULL
+    CONSTRAINT CK_PartidasEquipos4P_Simbolo CHECK (Simbolo IN ('O','X'))
+);
+
+-- TABLA: PartidaParticipantes
+CREATE TABLE dbo.PartidaParticipantes (
+  PartidaParticipanteId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  PartidaId             INT               NOT NULL,
+  JugadorId             INT               NOT NULL,
+  Rol                   NVARCHAR(3)       NOT NULL,
+  Equipo                CHAR(1)           NULL
+    CONSTRAINT CK_PartidaParticipantes_Equipo 
+        CHECK (Equipo IN ('A','B') OR Equipo IS NULL),
+  OrdenTurno            SMALLINT          NULL
+);
+
+-- TABLA: EstadisticasJugadores2P
+CREATE TABLE dbo.EstadisticasJugadores2P (
+  JugadorId       INT           NOT NULL PRIMARY KEY,  
+  Jugadas         INT           NOT NULL DEFAULT 0,
+  Ganadas         INT           NOT NULL DEFAULT 0,
+  EfectividadPorc DECIMAL(5,2)  NULL
+);
+
+-- TABLA: EstadisticasEquipos4P
+CREATE TABLE dbo.EstadisticasEquipos4P (
+  EquipoId        INT           NOT NULL PRIMARY KEY,  
+  Jugadas         INT           NOT NULL DEFAULT 0,
+  Ganadas         INT           NOT NULL DEFAULT 0,
+  EfectividadPorc DECIMAL(5,2)  NULL
+);
+\end{lstlisting}
+
+\subsection{Descripción de entidades}
+
+\begin{itemize}
+    \item \textbf{Jugadores:} almacena los datos básicos de cada jugador (identificador y nombre).
+    \item \textbf{Partidas:} guarda la información general de cada partida (modo 2P o 4P, fechas, duración, 
+          participantes, ganador, tablero final e historial completo en XML).
+    \item \textbf{Equipos4P:} define las parejas reutilizables para el modo de cuatro jugadores.
+    \item \textbf{PartidasEquipos4P:} relaciona qué equipos (A y B) jugaron una partida 4P y qué símbolo usaron (O o X).
+    \item \textbf{PartidaParticipantes:} lista detallada de los participantes en cada partida, 
+          unificando los roles:
+          \begin{itemize}
+              \item Modo 2P: ``O'' y ``X''.
+              \item Modo 4P: ``A1'', ``A2'', ``B1'', ``B2'', con su respectivo equipo A o B y orden de turno.
+          \end{itemize}
+    \item \textbf{EstadisticasJugadores2P:} estadísticas agregadas para modo de 2 jugadores (jugadas, ganadas, efectividad).
+    \item \textbf{EstadisticasEquipos4P:} estadísticas agregadas para equipos en modo 4 jugadores.
+\end{itemize}
+
+\subsection{Diagrama de base de datos (PGF/TikZ)}
+
+Diagrama simplificado de las principales tablas y sus relaciones:
+
+\begin{center}
+\begin{tikzpicture}[font=\small, node distance=2.5cm]
+
+\tikzstyle{table} = [
+  rectangle,
+  draw,
+  rounded corners,
+  fill=gray!10,
+  text centered,
+  minimum width=3.5cm,
+  minimum height=1cm
+]
+
+\node[table] (Jugadores) {Jugadores};
+
+\node[table, right=of Jugadores] (Partidas) {Partidas};
+
+\node[table, below=of Partidas] (PartidaParticipantes) {PartidaParticipantes};
+
+\node[table, below=of Jugadores] (Equipos4P) {Equipos4P};
+
+\node[table, right=of PartidaParticipantes] (PartidasEquipos4P) {PartidasEquipos4P};
+
+\node[table, below=of Equipos4P] (EstJug) {EstadisticasJugadores2P};
+
+\node[table, below=of PartidasEquipos4P] (EstEq) {EstadisticasEquipos4P};
+
+\draw[->] (PartidaParticipantes) -- (Partidas);
+\draw[->] (PartidaParticipantes) -- (Jugadores);
+
+\draw[->] (PartidasEquipos4P) -- (Partidas);
+\draw[->] (PartidasEquipos4P) -- (Equipos4P);
+
+\draw[->] (Equipos4P) -- (Jugadores);
+
+\draw[->] (EstJug) -- (Jugadores);
+\draw[->] (EstEq) -- (Equipos4P);
+
+\end{tikzpicture}
+\end{center}
+
+
+%====================================================
+\section{Instructivo de instalación, compilación y ejecución}
+%====================================================
+
+\subsection{Backend: ASP.NET Core Web API}
+
+\subsubsection{Requisitos previos}
+
+\begin{itemize}
+    \item .NET SDK (versión utilizada en el proyecto .NET 8.0).
+    \item SQL Server instalado y con una base de datos accesible para \texttt{QuixoDb}.
+    \item Herramienta para ejecutar scripts SQL (SQL Server Management Studio).
+\end{itemize}
+
+\subsubsection{Crear solución y proyecto}
+
+\begin{lstlisting}[language=bash]
+# Carpeta de trabajo
+mkdir quixo && cd quixo
+
+# Solucion y proyecto Web API
+dotnet new sln -n Quixo
+dotnet new webapi -n Quixo.Api
+
+# Agregar proyecto a la solucion
+dotnet sln Quixo.sln add Quixo.Api/Quixo.Api.csproj
+\end{lstlisting}
+
+\subsubsection{Instalación de paquetes NuGet}
+
+\begin{lstlisting}[language=bash]
+cd Quixo.Api
+
+# EF Core para SQL Server y herramientas de migraciones
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.EntityFrameworkCore
+\end{lstlisting}
+
+
+\subsubsection{Configuración de la base de datos}
+
+\begin{enumerate}
+    \item Crear la base de datos \texttt{QuixoDb} en SQL Server.
+    \item Ejecutar el script de creación de tablas mostrado en la Sección~4.
+    \item Configurar la cadena de conexión en \texttt{appsettings.json}:
+\end{enumerate}
+
+\begin{lstlisting}
+"ConnectionStrings": {
+  "SqlServer": "Server=SERVIDOR;Database=QuixoDb;Trusted_Connection=True;TrustServerCertificate=True"
+}
+\end{lstlisting}
+
+
+\subsubsection{Compilación y ejecución del backend}
+
+\begin{lstlisting}[language=bash]
+# Desde la carpeta Quixo.Api
+dotnet build
+dotnet run
+\end{lstlisting}
+
+El backend levantará la Web API (\texttt{http://localhost:5207}).
+
+\subsection{Frontend: React (SPA con Vite)}
+
+\subsubsection{Creación e instalación inicial}
+
+\begin{lstlisting}[language=bash]
+npm create vite@latest quixo-front -- --template react
+# Framework: React
+# Variant: JavaScript
+# rolldown-vite: No
+
+cd quixo-front
+npm install
+npm i axios react-router-dom classnames
+\end{lstlisting}
+
+\subsubsection{Configuración}
+
+\begin{itemize}
+    \item Configurar la URL base de la API (\texttt{http://localhost:5207}) en el archivo de servicios de Axios.
+    \item Ajustar rutas de React Router para:
+    \begin{itemize}
+        \item Menú principal (jugar nueva partida, ver partidas finalizadas, ver estadísticas).
+        \item Vista de juego (tablero 5x5, reloj de 7 segmentos, botón de reinicio).
+        \item Vista de historial de partidas.
+        \item Vista de estadísticas de jugadores y equipos.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Compilación y ejecución del frontend}
+
+\begin{lstlisting}[language=bash]
+# Desarrollo
+npm run dev
+
+# Compilacion para produccion
+npm run build
+\end{lstlisting}
+
+La aplicación esta disponible en \texttt{http://localhost:5173}.
+
+%====================================================
+\section{Referencias (sitios web y material consultado)}
+%====================================================
+
+A continuación se listan las referencias de sitios web utilizados para entender reglas, conceptos y ejemplos:
+
+\begin{itemize}
+    \item \textbf{Cómo jugar Quixo:}\\
+    \url{https://maldon.com.ar/blog/projects/quixo/}
+    
+    \item \textbf{SPA vs MPA y las arquitecturas Web:}\\
+    \url{https://www.arquitecturajava.com/spa-vs-mpa-y-las-arquitecturas-web/}
+    
+    \item \textbf{Tutorial: Creación de aplicaciones ASP.NET Core con React:}\\
+    \url{https://learn.microsoft.com/es-es/visualstudio/javascript/tutorial-asp-net-core-with-react?view=visualstudio}
+    
+    \item \textbf{Display de 7 segmentos (conceptos y funcionamiento):}\\
+    \url{https://industriasgsl.com/blogs/automatizacion/display-de-7-segmentos}
+
+    \item \textbf{Crear un documento en LaTeX:}\\
+    \url{https://manualdelatex.com/tutoriales/crear-un-documento}
+\end{itemize}
+
+%====================================================
+\section{Uso de agentes de IA y prompts}
+%====================================================
+
+En el desarrollo del proyecto se utilizaron agentes de IA para apoyo en el diseño de componentes específicos.
+A continuación se listan los prompts y recursos principales:
+
+\subsection{Prompts y enlaces}
+
+\begin{itemize}
+    \item \textbf{Cómo hacer un tablero 5x5 con React (X, O y neutro):}\\
+    Prompt y conversación: \url{https://chat.deepseek.com/share/0uqkmm2gqnp4z6zftn}
+    
+    \item \textbf{Reloj digital de 7 segmentos en React:}\\
+    Prompt y conversación: \url{https://chat.deepseek.com/share/0uqkmm2gqnp4z6zftn}
+    
+    \item \textbf{Fórmula de efectividad (porcentaje de partidas ganadas):}\\
+    Prompt y conversación: \url{https://chat.deepseek.com/share/0uqkmm2gqnp4z6zftn}
+\end{itemize}
+
+%====================================================
+\end{document}
